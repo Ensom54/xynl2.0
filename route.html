@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>湘韵农旅 - 定制旅游路线</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        h1,
+        h2 {
+            color: #4a7c59;
+        }
+        
+        .card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 400px;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+        }
+        
+        .carousel-control.prev {
+            left: 10px;
+        }
+        
+        .carousel-control.next {
+            right: 10px;
+        }
+        
+        form {
+            display: grid;
+            gap: 15px;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #4a7c59;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #3a6047;
+        }
+        
+        #hunan-map {
+            height: 400px;
+            background-color: #e6f3e6;
+            position: relative;
+        }
+        
+        .map-point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #4a7c59;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .map-point-label {
+            position: absolute;
+            background-color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .map-point:hover .map-point-label {
+            display: block;
+        }
+        
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        
+        #popupContent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .route-day {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>湘韵农旅 - 定制您的专属旅程</h1>
+
+        <div class="card">
+            <h2>精彩景点</h2>
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item"><img src="images/xiangyin1.jpg" alt="湘韵风光1"></div>
+                    <div class="carousel-item"><img src="images/xiangyin2.jpg" alt="湘韵风光2"></div>
+                    <div class="carousel-item"><img src="images/xiangyin3.jpg" alt="湘韵风光3"></div>
+                    <div class="carousel-item"><img src="images/xiangyin4.jpg" alt="湘韵风光4"></div>
+                </div>
+                <a href="#" class="carousel-control prev">&lt;</a>
+                <a href="#" class="carousel-control next">&gt;</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>定制您的旅游路线</h2>
+            <form id="routeForm">
+                <div>
+                    <label for="duration">行程天数：</label>
+                    <input type="number" id="duration" name="duration" min="1" max="30" required>
+                </div>
+                <div>
+                    <label for="interests">兴趣爱好：</label>
+                    <select id="interests" name="interests" multiple required>
+                        <option value="nature">自然风光</option>
+                        <option value="culture">文化古迹</option>
+                        <option value="food">美食体验</option>
+                        <option value="adventure">户外冒险</option>
+                        <option value="farming">农事体验</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="budget">预算（元/人）：</label>
+                    <input type="number" id="budget" name="budget" min="100" required>
+                </div>
+                <div>
+                    <label for="transportation">交通方式：</label>
+                    <select id="transportation" name="transportation" required>
+                        <option value="">请选择</option>
+                        <option value="car">自驾</option>
+                        <option value="public">公共交通</option>
+                        <option value="tour_bus">旅游大巴</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="accommodation">住宿偏好：</label>
+                    <select id="accommodation" name="accommodation" required>
+                        <option value="">请选择</option>
+                        <option value="hotel">酒店</option>
+                        <option value="guesthouse">民宿</option>
+                        <option value="camping">露营</option>
+                    </select>
+                </div>
+                <div>
+                    <label>特殊饮食需求：</label>
+                    <div>
+                        <input type="checkbox" id="vegetarian" name="diet" value="vegetarian">
+                        <label for="vegetarian">素食</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="gluten_free" name="diet" value="gluten_free">
+                        <label for="gluten_free">无麸质</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="halal" name="diet" value="halal">
+                        <label for="halal">清真</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="specialRequirements">特殊要求：</label>
+                    <textarea id="specialRequirements" name="specialRequirements" rows="4"></textarea>
+                </div>
+                <button type="submit">生成定制路线</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>湘韵农旅地图</h2>
+            <div id="hunan-map"></div>
+        </div>
+    </div>
+
+    <div id="popupOverlay">
+        <div id="popupContent">
+            <h3>推荐路线</h3>
+            <div id="routeDetails"></div>
+            <button onclick="closePopup()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 轮播图功能
+        function initCarousel() {
+            const carousel = document.querySelector('.carousel-inner');
+            const prevBtn = document.querySelector('.carousel-control.prev');
+            const nextBtn = document.querySelector('.carousel-control.next');
+            let currentIndex = 0;
+
+            function showSlide(index) {
+                carousel.style.transform = `translateX(-${index * 100}%)`;
+            }
+
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentIndex = (currentIndex - 1 + 4) % 4;
+                showSlide(currentIndex);
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentIndex = (currentIndex + 1) % 4;
+                showSlide(currentIndex);
+            });
+        }
+
+        // 表单提交功能
+        function initForm() {
+            document.getElementById('routeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const duration = parseInt(document.getElementById('duration').value);
+                const interests = Array.from(document.getElementById('interests').selectedOptions).map(option => option.value);
+                const budget = parseInt(document.getElementById('budget').value);
+                const transportation = document.getElementById('transportation').value;
+                const accommodation = document.getElementById('accommodation').value;
+                const diet = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(checkbox => checkbox.value);
+                const specialRequirements = document.getElementById('specialRequirements').value;
+
+                // 生成定制路线
+                const customRoute = generateCustomRoute(duration, interests, budget, transportation, accommodation, diet, specialRequirements);
+
+                // 显示弹出框
+                showPopup(customRoute);
+            });
+        }
+
+        // 生成定制路线
+        function generateCustomRoute(duration, interests, budget, transportation, accommodation, diet, specialRequirements) {
+            const attractions = {
+                nature: [{
+                    name: "张家界国家森林公园",
+                    description: "世界自然遗产，以奇峰怪石闻名于世。",
+                    image: "images/zhangjiajie.jpg"
+                }, {
+                    name: "武陵源风景名胜区",
+                    description: "集山、水、林、洞于一体的自然景观。",
+                    image: "images/wulingyuan.jpg"
+                }],
+                culture: [{
+                    name: "岳麓书院",
+                    description: "千年学府，中国古代四大书院之一。",
+                    image: "images/yuelushuyuan.jpg"
+                }, {
+                    name: "凤凰古城",
+                    description: "保存完好的中国古代城镇，融合了江南与西南的建筑特色。",
+                    image: "images/fenghuangcheng.jpg"
+                }],
+                food: [{
+                    name: "长沙臭豆腐",
+                    description: "闻起来臭，吃起来香，长沙特色小吃。",
+                    image: "images/choudoufu.jpg"
+                }, {
+                    name: "湘西腊肉",
+                    description: "湘西地区特色美食，香醇可口。",
+                    image: "images/xiangxi-larou.jpg"
+                }],
+                adventure: [{
+                    name: "天门山玻璃栈道",
+                    description: "刺激的高空玻璃栈道，俯瞰壮丽山景。",
+                    image: "images/tianmenshan-bolizhandao.jpg"
+                }, {
+                    name: "张家界大峡谷玻璃桥",
+                    description: "世界最高最长的玻璃桥，横跨峡谷。",
+                    image: "images/daxiagu-boliqiao.jpg"
+                }],
+                farming: [{
+                    name: "湘西茶园",
+                    description: "体验采茶制茶的乐趣，品尝新鲜茶叶。",
+                    image: "images/xiangxi-tea.jpg"
+                }, {
+                    name: "洞庭湖渔村",
+                    description: "体验渔民生活，学习传统捕鱼技艺。",
+                    image: "images/xiangyin4.jpg"
+                }]
+            };
+
+            let route = [];
+            let dailyBudget = budget / duration;
+
+            for (let day = 1; day <= duration; day++) {
+                let dayPlan = {
+                    day: day,
+                    activities: []
+                };
+                let remainingBudget = dailyBudget;
+
+                // 随机选择2-3个景点
+                let selectedInterests = interests.sort(() => 0.5 - Math.random()).slice(0, Math.min(interests.length, 3));
+                for (let interest of selectedInterests) {
+                    if (attractions[interest] && attractions[interest].length > 0) {
+                        let attraction = attractions[interest][Math.floor(Math.random() * attractions[interest].length)];
+                        dayPlan.activities.push(attraction);
+                        remainingBudget -= 100; // 假设每个景点花费100元
+                    }
+                }
+
+                // 添加交通和住宿信息
+                dayPlan.transportation = transportation;
+                dayPlan.accommodation = accommodation;
+
+                // 添加餐饮预算和饮食需求
+                dayPlan.meals = `早餐、午餐和晚餐 (预算: ${Math.floor(remainingBudget / 2)}元)`;
+                if (diet.length > 0) {
+                    dayPlan.meals += ` - 特殊饮食需求: ${diet.join(', ')}`;
+                }
+
+                route.push(dayPlan);
+            }
+
+            return route;
+        }
+
+        // 显示弹出框
+        function showPopup(route) {
+            const popup = document.getElementById('popupOverlay');
+            const content = document.getElementById('routeDetails');
+            content.innerHTML = '';
+
+            route.forEach(day => {
+                        const dayElement = document.createElement('div');
+                        dayElement.className = 'route-day';
+                        dayElement.innerHTML = `
+                    <h4>第${day.day}天</h4>
+                    <p>交通方式: ${getTransportationName(day.transportation)}</p>
+                    <p>住宿: ${getAccommodationName(day.accommodation)}</p>
+                    <ul>
+                        ${day.activities.map(activity => `
+                            <li>
+                                <strong>${activity.name}</strong>
+                                <p>${activity.description}</p>
+                                <img src="${activity.image}" alt="${activity.name}" style="width:100%; max-width:300px;">
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p>${day.meals}</p>
+                `;
+                content.appendChild(dayElement);
+            });
+
+            popup.style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        function getTransportationName(value) {
+            const transportationMap = {
+                'car': '自驾',
+                'public': '公共交通',
+                'tour_bus': '旅游大巴'
+            };
+            return transportationMap[value] || value;
+        }
+
+        function getAccommodationName(value) {
+            const accommodationMap = {
+                'hotel': '酒店',
+                'guesthouse': '民宿',
+                'camping': '露营'
+            };
+            return accommodationMap[value] || value;
+        }
+
+        // 湖南地图动画功能
+        function initHunanMap() {
+            const mapContainer = document.getElementById('hunan-map');
+            const mapPoints = [
+                { name: '长沙', x: 60, y: 60 },
+                { name: '张家界', x: 20, y: 20 },
+                { name: '凤凰', x: 10, y: 40 },
+                { name: '岳阳', x: 70, y: 30 },
+                { name: '湘西', x: 5, y: 30 }
+            ];
+
+            mapPoints.forEach(point => {
+                const mapPoint = document.createElement('div');
+                mapPoint.className = 'map-point';
+                mapPoint.style.left = `${point.x}%`;
+                mapPoint.style.top = `${point.y}%`;
+
+                const label = document.createElement('div');
+                label.className = 'map-point-label';
+                label.textContent = point.name;
+                mapPoint.appendChild(label);
+
+                mapContainer.appendChild(mapPoint);
+            });
+
+            // 添加简单的动画效果
+            let step = 0;
+            function animate() {
+                step += 0.05;
+                mapPoints.forEach((point, index) => {
+                    const mapPoint = mapContainer.children[index];
+                    const yOffset = Math.sin(step + index * 0.5) * 5;
+                    mapPoint.style.transform = `translate(-50%, calc(-50% + ${yOffset}px))`;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // 页面加载完成后初始化所有功能
+        window.onload = function() {
+            initCarousel();
+            initForm();
+            initHunanMap();
+        };
+    </script>
+</body>
+
+</html>
